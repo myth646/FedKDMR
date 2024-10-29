@@ -21,7 +21,6 @@ class LocalUpdate_FedIndep(object):
         self.loss_func = nn.CrossEntropyLoss()
         self.selected_clients = []
         self.ldr_train = DataLoader(DatasetSplit(dataset, idxs), batch_size=self.args.local_bs, shuffle=True)
-        self.ensemble_alpha = args.ensemble_alpha
         self.verbose = verbose
 
     def train(self, net):
