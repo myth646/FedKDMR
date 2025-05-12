@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+ #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Python version: 3.6
 import numpy as np
@@ -73,11 +73,13 @@ def FedGen(args, net_glob, dataset_train, dataset_test, dict_users):
         w_locals[user] = w_local_dict
 
     acc = []
+    loss = []
 
     for iter in range(args.epochs):
-
-        print('*' * 80)
-        print('Round {:3d}'.format(iter))
+        if iter==0:
+            print('start')
+        # print('*' * 80)
+        # print('Round {:3d}'.format(iter))
 
         w_locals = []
         lens = []
@@ -113,9 +115,20 @@ def FedGen(args, net_glob, dataset_train, dataset_test, dict_users):
         net_glob.load_state_dict(w_glob)
 
         if iter % 10 == 9:
-            acc.append(test(net_glob, dataset_test, args))
+            print('*' * 80)
+            print('Round {:3d}'.format(iter))
+            # acc.append(test(net_glob, dataset_test, args))
+            item_acc,item_loss = test_img(net_glob, dataset_test, args)
+            acc.append(item_acc)
+            loss.append(item_loss)
+
+            print("Testing accuracy: {:.2f}".format(item_acc))
+            print("Testing loss: {:.2f}".format(item_loss))
 
     save_result(acc, 'test_acc', args)
+    save_result(loss, 'test_loss', args)
+
+    # save_result(acc, 'test_acc', args)
 
 def get_label_weights(args, users, label_counts):
     label_weights = []
@@ -147,7 +160,7 @@ def train_generator(args, net_glob, generative_model, models, users, label_count
     generative_optimizer = torch.optim.Adam(params=generative_model.parameters(),lr=args.ensemble_lr,weight_decay=args.weight_decay)
 
     for i in range(epoches):
-
+        
         generative_model.train()
         net_glob.eval()
 
@@ -207,3 +220,11 @@ def test(net_glob, dataset_test, args):
     print("Testing accuracy: {:.2f}".format(acc_test))
 
     return acc_test.item()
+
+def test_with_loss(net_glob, dataset_test, args):
+    # testing
+    acc_test, loss_test = test_img(net_glob, dataset_test, args)
+
+    print("Testing accuracy: {:.2f}".format(acc_test))
+
+    return acc_test.item(), loss_test

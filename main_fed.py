@@ -17,7 +17,19 @@ from models import *
 from utils.get_dataset import get_dataset
 from utils.utils import save_result,save_model
 from Algorithm.Training_FedGen import FedGen
+
+from Algorithm.Training_FedKDMR import FedKDMR,Fed2WKDMR,FedKDMR_d,Fed2WKDMR_d
+
+from Algorithm.Training_FedKDMRV1 import FedKDMRV11,Fed2WKDMRV11,FedKDMRV12,Fed2WKDMRV12
+from Algorithm.Training_FedKDMRV2 import FedKDMRV21,Fed2WKDMRV21,FedKDMRV21,Fed2WKDMRV22
+from Algorithm.Training_FedKDMRV3 import FedKDMRV3,Fed2WKDMRV3
+from Algorithm.Training_FedCodl import FedCodl,Fed2Codl
+# from Algorithm.Training_FedCodl_revise import FedCodl_revise,Fed2Codl_revise
+from Algorithm.Training_FedMRwG import FedMRwG
+
 from Algorithm.Training_FedMR import FedMR
+
+
 from Algorithm.Training_FedMR import FedMR_Partition
 from Algorithm.Training_FedIndenp import FedIndep
 from Algorithm.Training_FedMut import FedMut
@@ -75,11 +87,14 @@ def FedProx(net_glob, dataset_train, dataset_test, dict_users):
     net_glob.train()
 
     acc = []
+    loss = []
 
     for iter in range(args.epochs):
+        if iter==0:
+            print('start')
 
-        print('*' * 80)
-        print('Round {:3d}'.format(iter))
+        # print('*' * 80)
+        # print('Round {:3d}'.format(iter))
 
         w_locals = []
         lens = []
@@ -98,9 +113,18 @@ def FedProx(net_glob, dataset_train, dataset_test, dict_users):
         net_glob.load_state_dict(w_glob)
 
         if iter % 10 == 9:
-            acc.append(test(net_glob, dataset_test, args))
+            print('*' * 80)
+            print('Round {:3d}'.format(iter))
+            # acc.append(test(net_glob, dataset_test, args))
+            item_acc,item_loss = test_img(net_glob, dataset_test, args)
+            acc.append(item_acc.item())
+            loss.append(item_loss)
+
+            print("Testing accuracy: {:.2f}".format(item_acc))
+            print("Testing loss: {:.2f}".format(item_loss))
 
     save_result(acc, 'test_acc', args)
+    save_result(loss, 'test_loss', args)
 
 from utils.clustering import *
 from scipy.cluster.hierarchy import linkage
@@ -255,6 +279,54 @@ if __name__ == '__main__':
             FedMR(args, net_glob, dataset_train, dataset_test, dict_users)
         else:
             FedMR_Partition(args, net_glob, dataset_train, dataset_test, dict_users,partition)
+            
+    elif args.algorithm == 'FedKDMR':
+        FedKDMR(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'Fed2WKDMR':
+        Fed2WKDMR(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'FedKDMR_d':
+        FedKDMR_d(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'Fed2WKDMR_d':
+        Fed2WKDMR_d(args, net_glob, dataset_train, dataset_test, dict_users)
+    
+    elif args.algorithm == 'FedKDMRV11':
+        FedKDMRV11(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'Fed2WKDMRV11':
+        Fed2WKDMRV11(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'FedKDMRV12':
+        FedKDMRV12(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'Fed2WKDMRV12':
+        Fed2WKDMRV12(args, net_glob, dataset_train, dataset_test, dict_users)
+        
+        
+    elif args.algorithm == 'FedKDMRV21':
+        FedKDMRV11(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'Fed2WKDMRV21':
+        Fed2WKDMRV11(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'FedKDMRV22':
+        FedKDMRV12(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'Fed2WKDMRV22':
+        Fed2WKDMRV12(args, net_glob, dataset_train, dataset_test, dict_users)
+    
+    
+    elif args.algorithm == 'FedKDMRV3':
+        FedKDMRV3(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'Fed2WKDMRV3':
+        Fed2WKDMRV3(args, net_glob, dataset_train, dataset_test, dict_users)
+        
+    elif args.algorithm == 'FedCodl':
+        FedCodl(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'Fed2Codl':
+        Fed2Codl(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'FedMRwG':
+        FedMRwG(args, net_glob, dataset_train, dataset_test, dict_users)
+        
+        
+    elif args.algorithm == 'FedCodl_revise':
+        FedCodl_revise(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'Fed2Codl_revise':
+        Fed2Codl_revise(args, net_glob, dataset_train, dataset_test, dict_users)
+
     elif args.algorithm == 'FedIndep':
         FedIndep(args, net_glob, dataset_train, dataset_test, dict_users)
     elif args.algorithm == 'FedMut':
@@ -263,6 +335,7 @@ if __name__ == '__main__':
         FedExP(args, net_glob, dataset_train, dataset_test, dict_users)
     elif args.algorithm == 'FedASAM':
         FedASAM(args, net_glob, dataset_train, dataset_test, dict_users)
+        
 
 
 
