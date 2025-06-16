@@ -36,7 +36,7 @@ def args_parser():
     parser.add_argument('--emnist_type', type=str, default='letters', help="types of emnist dataset")
     parser.add_argument('--generate_data', type=int, default=1, help="whether generate new dataset")
     parser.add_argument('--iid', type=int, default=1, help='whether i.i.d or not')
-    parser.add_argument('--noniid_case', type=int, default=0, help="non i.i.d case (1, 2, 3, 4)")
+    parser.add_argument('--noniid_case', type=int, default=5, help="non i.i.d case (1, 2, 3, 4)")
     parser.add_argument('--data_beta', type=float, default=0.5,
                         help='The parameter for the dirichlet distribution for data partitioning')
     parser.add_argument('--num_classes', type=int, default=10, help="number of classes")
