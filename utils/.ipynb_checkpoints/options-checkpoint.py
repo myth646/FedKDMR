@@ -33,6 +33,7 @@ def args_parser():
 
     # other arguments
     parser.add_argument('--dataset', type=str, default='cifar10', help="name of dataset")
+    parser.add_argument('--emnist_type', type=str, default='letters', help="types of emnist dataset")
     parser.add_argument('--generate_data', type=int, default=1, help="whether generate new dataset")
     parser.add_argument('--iid', type=int, default=1, help='whether i.i.d or not')
     parser.add_argument('--noniid_case', type=int, default=0, help="non i.i.d case (1, 2, 3, 4)")
@@ -52,25 +53,16 @@ def args_parser():
     parser.add_argument('--pool_option', type=str, default='FIFO', help='FIFO or BOX')
     parser.add_argument('--sim_type', type=str, default='L1', help='Cluster Sampling: cosine or L1 or L2')
 
-    # FedMut
-    parser.add_argument('--radius', type=float, default=5.0)
-    parser.add_argument('--min_radius', type=float, default=0.1)
-    parser.add_argument('--mut_acc_rate', type=float, default=0.3)
-    parser.add_argument('--mut_bound', type=int, default=100)
 
-    # FedMR arguments
-    parser.add_argument("--first_stage_bound", type=int, default=0)
-    parser.add_argument("--fedmr_partition", type=float, default=0.0)
-    parser.add_argument("--KD_buffer_bound", type=int, default=50)
-    
-    parser.add_argument("--KD_alpha", type=float, default=0.3)
+    # KD/MR arguments
+    parser.add_argument("--first_stage_bound", type=int, default=0,help='AvgBased-pre-training')
+    parser.add_argument("--KD_buffer_bound", type=int, default=50,help='Dynamic distillation buffer')
+    parser.add_argument("--KD_alpha", type=float, default=0.5,help='Distillation weight')
     parser.add_argument("--Dynamic_KD_power", type=float, default=1,help='Dynamic distillation weight growth power')
     
-    # MR with Global
-    parser.add_argument("--shuffle_r", type=float, default=0.5,help='shuffle ratio')
-    parser.add_argument("--retain_r", type=float, default=0.5,help='retain ratio')
     
-
+    
+    
 
     args = parser.parse_args()
     return args

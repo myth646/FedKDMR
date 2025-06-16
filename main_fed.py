@@ -17,24 +17,11 @@ from models import *
 from utils.get_dataset import get_dataset
 from utils.utils import save_result,save_model
 from Algorithm.Training_FedGen import FedGen
-
-from Algorithm.Training_FedKDMR import FedKDMR,Fed2WKDMR,FedKDMR_d,Fed2WKDMR_d
-
-from Algorithm.Training_FedKDMRV1 import FedKDMRV11,Fed2WKDMRV11,FedKDMRV12,Fed2WKDMRV12
-from Algorithm.Training_FedKDMRV2 import FedKDMRV21,Fed2WKDMRV21,FedKDMRV21,Fed2WKDMRV22
-from Algorithm.Training_FedKDMRV3 import FedKDMRV3,Fed2WKDMRV3
+from Algorithm.Training_FedKDMR import FedKDMR,Fed2WKDMR
 from Algorithm.Training_FedCodl import FedCodl,Fed2Codl
-# from Algorithm.Training_FedCodl_revise import FedCodl_revise,Fed2Codl_revise
-from Algorithm.Training_FedMRwG import FedMRwG
-
 from Algorithm.Training_FedMR import FedMR
-
-
-from Algorithm.Training_FedMR import FedMR_Partition
-from Algorithm.Training_FedIndenp import FedIndep
-from Algorithm.Training_FedMut import FedMut
 from Algorithm.Training_FedExP import FedExP
-from Algorithm.Training_FedASAM import FedASAM
+
 
 def FedAvg(net_glob, dataset_train, dataset_test, dict_users):
 
@@ -245,14 +232,14 @@ if __name__ == '__main__':
         net_glob = CNNCifar(args)
     elif args.model == 'resnet20' and args.dataset == 'mnist':
         net_glob = ResNet20_mnist(args=args).to(args.device)
-    elif args.model == 'resnet20' and (args.dataset == 'fashion-mnist' or args.dataset == 'femnist'):
+    elif args.model == 'resnet20' and (args.dataset == 'fashion-mnist'or args.dataset == 'emnist' or args.dataset == 'femnist'):
         net_glob = ResNet20_mnist(args=args).to(args.device)
     elif args.model == 'resnet20' and args.dataset == 'cifar10':
         net_glob = ResNet20_cifar(args=args).to(args.device)
     elif args.model == 'resnet20' and args.dataset == 'cifar100':
         net_glob = ResNet20_cifar(args=args).to(args.device)
     elif 'resnet' in args.model:
-        if args.dataset == 'mnist' or args.dataset == 'fashion-mnist' or args.dataset == 'femnist':
+        if args.dataset == 'mnist' or args.dataset == 'fashion-mnist'or args.dataset == 'emnist' or args.dataset == 'femnist':
             net_glob = ResNet18_MNIST(num_classes = args.num_classes)
         else:
             net_glob = ResNet18_cifar10(num_classes = args.num_classes)
@@ -273,68 +260,18 @@ if __name__ == '__main__':
         ClusteredSampling(net_glob, dataset_train, dataset_test, dict_users)
     elif args.algorithm == 'FedGen':
         FedGen(args, net_glob, dataset_train, dataset_test, dict_users)
-    elif args.algorithm == 'FedMR':
-        partition = args.fedmr_partition
-        if partition == 0:
-            FedMR(args, net_glob, dataset_train, dataset_test, dict_users)
-        else:
-            FedMR_Partition(args, net_glob, dataset_train, dataset_test, dict_users,partition)
-            
     elif args.algorithm == 'FedKDMR':
         FedKDMR(args, net_glob, dataset_train, dataset_test, dict_users)
     elif args.algorithm == 'Fed2WKDMR':
         Fed2WKDMR(args, net_glob, dataset_train, dataset_test, dict_users)
-    elif args.algorithm == 'FedKDMR_d':
-        FedKDMR_d(args, net_glob, dataset_train, dataset_test, dict_users)
-    elif args.algorithm == 'Fed2WKDMR_d':
-        Fed2WKDMR_d(args, net_glob, dataset_train, dataset_test, dict_users)
-    
-    elif args.algorithm == 'FedKDMRV11':
-        FedKDMRV11(args, net_glob, dataset_train, dataset_test, dict_users)
-    elif args.algorithm == 'Fed2WKDMRV11':
-        Fed2WKDMRV11(args, net_glob, dataset_train, dataset_test, dict_users)
-    elif args.algorithm == 'FedKDMRV12':
-        FedKDMRV12(args, net_glob, dataset_train, dataset_test, dict_users)
-    elif args.algorithm == 'Fed2WKDMRV12':
-        Fed2WKDMRV12(args, net_glob, dataset_train, dataset_test, dict_users)
-        
-        
-    elif args.algorithm == 'FedKDMRV21':
-        FedKDMRV11(args, net_glob, dataset_train, dataset_test, dict_users)
-    elif args.algorithm == 'Fed2WKDMRV21':
-        Fed2WKDMRV11(args, net_glob, dataset_train, dataset_test, dict_users)
-    elif args.algorithm == 'FedKDMRV22':
-        FedKDMRV12(args, net_glob, dataset_train, dataset_test, dict_users)
-    elif args.algorithm == 'Fed2WKDMRV22':
-        Fed2WKDMRV12(args, net_glob, dataset_train, dataset_test, dict_users)
-    
-    
-    elif args.algorithm == 'FedKDMRV3':
-        FedKDMRV3(args, net_glob, dataset_train, dataset_test, dict_users)
-    elif args.algorithm == 'Fed2WKDMRV3':
-        Fed2WKDMRV3(args, net_glob, dataset_train, dataset_test, dict_users)
-        
     elif args.algorithm == 'FedCodl':
         FedCodl(args, net_glob, dataset_train, dataset_test, dict_users)
     elif args.algorithm == 'Fed2Codl':
         Fed2Codl(args, net_glob, dataset_train, dataset_test, dict_users)
-    elif args.algorithm == 'FedMRwG':
-        FedMRwG(args, net_glob, dataset_train, dataset_test, dict_users)
-        
-        
-    elif args.algorithm == 'FedCodl_revise':
-        FedCodl_revise(args, net_glob, dataset_train, dataset_test, dict_users)
-    elif args.algorithm == 'Fed2Codl_revise':
-        Fed2Codl_revise(args, net_glob, dataset_train, dataset_test, dict_users)
-
-    elif args.algorithm == 'FedIndep':
-        FedIndep(args, net_glob, dataset_train, dataset_test, dict_users)
-    elif args.algorithm == 'FedMut':
-        FedMut(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'FedMR':
+        FedMR(args, net_glob, dataset_train, dataset_test, dict_users)    
     elif args.algorithm == 'FedExP':
         FedExP(args, net_glob, dataset_train, dataset_test, dict_users)
-    elif args.algorithm == 'FedASAM':
-        FedASAM(args, net_glob, dataset_train, dataset_test, dict_users)
         
 
 

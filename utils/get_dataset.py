@@ -13,7 +13,8 @@ import os
 import json
 
 def get_dataset(args):
-
+    
+    
     file = os.path.join("data", args.dataset + "_" + str(args.num_users))
     if args.iid:
         file += "_iid"
@@ -78,10 +79,32 @@ def get_dataset(args):
         if args.generate_data:
             if args.iid:
                 dict_users = fashion_mnist_iid(dataset_train, args.num_users)
-            else:
+            elif args.noniid_case < 5:
                 dict_users = fashion_mnist_noniid(dataset_train, args.num_users, case=args.noniid_case)
+            else:
+                dict_users = separate_data(dataset_train, args.num_users, args.num_classes, args.data_beta)
         else:
             dict_users = read_record(file)
+            
+            
+    elif args.dataset == 'emnist':        
+        trans = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
+        dataset_train = datasets.EMNIST(root='./data/emnist/', split=args.emnist_type, train=True, download=False, transform=trans)
+        dataset_test = datasets.EMNIST(root='./data/emnist/',split=args.emnist_type,train=False,download=True,transform=trans)
+        offset = int(dataset_train.targets.min())
+        if offset > 0:
+            dataset_train.targets -= offset
+            dataset_test .targets -= offset
+        if args.generate_data:
+            if args.iid:
+                dict_users = emnist_iid(dataset_train, args.num_users)
+            elif args.noniid_case < 5:
+                dict_users = emnist_noniid(dataset_train, args.num_users, case=args.noniid_case)
+            else:
+                dict_users = separate_data(dataset_train, args.num_users, args.num_classes, args.data_beta)
+        else:
+            dict_users = read_record(file)
+            
     elif args.dataset == 'femnist':
         dataset_train = FEMNIST(True)
         dataset_test = FEMNIST(False)
@@ -97,8 +120,11 @@ def get_dataset(args):
         exit('Error: unrecognized dataset')
 
     if args.generate_data:
-        with open(file,'w') as f:
-            dataJson = {"dataset":args.dataset,"num_users":args.num_users,"iid":args.iid,"noniid_case":args.noniid_case,"data_beta":args.data_beta,"train_data":dict_users}
-            json.dump(dataJson,f)
+        if not os.path.exists(file):
+            with open(file,'w') as f:
+                dataJson = {"dataset":args.dataset,"num_users":args.num_users,"iid":args.iid,"noniid_case":args.noniid_case,"data_beta":args.data_beta,"train_data":dict_users}
+                json.dump(dataJson,f)
+        else:
+            print(f"The file already exists, skip writing.：{file}")
 
     return dataset_train, dataset_test, dict_users

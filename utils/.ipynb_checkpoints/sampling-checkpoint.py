@@ -15,6 +15,12 @@ def mnist_noniid(dataset, num_users, case=1):
     num_shards, num_imgs = 100, 600
     return non_iid(dataset, num_users, num_shards, num_imgs, case)
 
+def emnist_iid(dataset, num_users):
+    return iid(dataset, num_users)
+
+def emnist_noniid(dataset, num_users, case=1):
+    num_shards, num_imgs = 100, 600
+    return non_iid(dataset, num_users, num_shards, num_imgs, case)
 
 def fashion_mnist_iid(dataset, num_users):
     return iid(dataset, num_users)
@@ -136,18 +142,4 @@ def noniid_label_2(dataset, num_users, num_shards, num_imgs):
     return dict_users
 
 
-if __name__ == '__main__':
 
-    trans = transforms.Compose([transforms.ToTensor()])
-    dataset_train = datasets.SVHN('../data/svhn/', split='train', download=True, transform=trans)
-    # trans = transforms.Compose([transforms.ToTensor()])
-    # dataset_train = datasets.FashionMNIST('../data/fashion-mnist/', train=True, download=True, transform=trans)
-    # trans_mnist = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))])
-    # dataset_train = datasets.MNIST('../data/mnist/', train=True, download=True, transform=trans_mnist)
-    # trans_cifar = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
-    # dataset_train = datasets.CIFAR10('../data/cifar', train=True, download=True, transform=trans_cifar)
-    num = 100
-    d = svhn_noniid(dataset_train, num)
-    for user_idx in d:
-        print(user_idx)
-        print([dataset_train[img_idx][1] for img_idx in d[user_idx]])
