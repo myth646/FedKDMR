@@ -115,45 +115,6 @@ class LocalUpdate(object):
 
         return net.state_dict()    
     
-def recombination(w_locals, m):
-
-    w_locals_new = copy.deepcopy(w_locals)
-
-    nr = [i for i in range(m)]
-
-    for k in w_locals[0].keys():
-        random.shuffle(nr)
-        for i in range(m):
-            w_locals_new[i][k] = w_locals[nr[i]][k]
-
-    return w_locals_new
-
-def recombination_partition(w_locals, m, partition):
-    is_partition = True
-
-    w_locals_new = copy.deepcopy(w_locals)
-
-    nr = [i for i in range(m)]
-
-    p_idx = 0
-
-
-    random.shuffle(nr)
-    idx = 0.0
-    layer_num = len(w_locals[0].keys())
-    cnt = 0
-    for k in w_locals[0].keys():
-        if (partition == 0) or idx >= layer_num * partition*cnt:
-            random.shuffle(nr)
-            cnt = cnt + 1
-        for i in range(m):
-            w_locals_new[i][k] = w_locals[nr[i]][k]
-        idx = idx + 1.0
-    print(idx)
-    print(partition)
-
-    return w_locals_new
-
 def FedCodl(args, net_glob, dataset_train, dataset_test, dict_users):
     net_glob.train()
 
@@ -212,7 +173,7 @@ def FedCodl(args, net_glob, dataset_train, dataset_test, dict_users):
             acc.append(item_acc)
             loss.append(item_loss)
             train_loss.append(tl)
-            sim_arr.append(sim(args, w_locals))
+            # sim_arr.append(sim(args, w_locals))
 
         if iter >= (args.first_stage_bound -1): 
             for i in range(len(w_locals_KD)):
@@ -226,7 +187,7 @@ def FedCodl(args, net_glob, dataset_train, dataset_test, dict_users):
 
 
     save_result(acc, 'test_acc', args)
-    save_result(sim_arr, 'sim', args)
+    # save_result(sim_arr, 'sim', args)
     save_result(loss, 'test_loss', args)
     save_result(train_loss, 'test_train_loss', args)
     save_model(net_glob.state_dict(), 'test_model', args)
@@ -298,7 +259,7 @@ def Fed2Codl(args, net_glob, dataset_train, dataset_test, dict_users):
             acc.append(item_acc)
             loss.append(item_loss)
             train_loss.append(tl)
-            sim_arr.append(sim(args, w_locals))
+            # sim_arr.append(sim(args, w_locals))
 
         if iter >= (args.first_stage_bound -1): 
             for i in range(len(w_locals_KD)):
@@ -312,7 +273,7 @@ def Fed2Codl(args, net_glob, dataset_train, dataset_test, dict_users):
 
 
     save_result(acc, 'test_acc', args)
-    save_result(sim_arr, 'sim', args)
+    # save_result(sim_arr, 'sim', args)
     save_result(loss, 'test_loss', args)
     save_result(train_loss, 'test_train_loss', args)
     save_model(net_glob.state_dict(), 'test_model', args)
