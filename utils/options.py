@@ -36,7 +36,7 @@ def args_parser():
     parser.add_argument('--emnist_type', type=str, default='letters', help="types of emnist dataset")
     parser.add_argument('--generate_data', type=int, default=1, help="whether generate new dataset")
     parser.add_argument('--iid', type=int, default=1, help='whether i.i.d or not')
-    parser.add_argument('--noniid_case', type=int, default=5, help="non i.i.d case (1, 2, 3, 4)")
+    parser.add_argument('--noniid_case', type=int, default=0, help="non-i.i.d. case (0, 1, 2, 3, 4, 5), where 5 denotes a Dirichlet distribution and 0 denotes i.i.d. case.")
     parser.add_argument('--data_beta', type=float, default=0.5,
                         help='The parameter for the dirichlet distribution for data partitioning')
     parser.add_argument('--num_classes', type=int, default=10, help="number of classes")
@@ -59,7 +59,9 @@ def args_parser():
     parser.add_argument("--KD_buffer_bound", type=int, default=50,help='Dynamic distillation buffer')
     parser.add_argument("--KD_alpha", type=float, default=0.5,help='Distillation weight')
     parser.add_argument("--Dynamic_KD_power", type=float, default=1,help='Dynamic distillation weight growth power')
-    
+    # GKD
+    parser.add_argument("--history", type=int, default=2,help='Historical Global Model')
+    parser.add_argument('--GKD_balance', action='store_true', default=False,help="Whether to adopt balanced KD weighting")
     
     
     

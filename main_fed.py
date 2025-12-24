@@ -21,7 +21,7 @@ from Algorithm.Training_FedKDMR import FedKDMR,Fed2WKDMR
 from Algorithm.Training_FedCodl import FedCodl,Fed2Codl
 from Algorithm.Training_FedMR import FedMR
 from Algorithm.Training_FedExP import FedExP
-
+from Algorithm.Training_FedGKD import FedGKD
 
 def FedAvg(net_glob, dataset_train, dataset_test, dict_users):
 
@@ -222,7 +222,7 @@ if __name__ == '__main__':
 
     dataset_train, dataset_test, dict_users = get_dataset(args)
 
-    if args.model == 'cnn' and args.dataset == 'femnist':
+    if args.model == 'cnn' and (args.dataset == 'femnist' or args.dataset == 'fashion-mnist'):
         net_glob = CNNFashionMnist(args)
     elif args.model == 'cnn' and args.dataset == 'mnist':
         net_glob = CNNMnist(args)
@@ -268,6 +268,8 @@ if __name__ == '__main__':
         FedCodl(args, net_glob, dataset_train, dataset_test, dict_users)
     elif args.algorithm == 'Fed2Codl':
         Fed2Codl(args, net_glob, dataset_train, dataset_test, dict_users)
+    elif args.algorithm == 'FedGKD':
+        FedGKD(args, net_glob, dataset_train, dataset_test, dict_users)
     elif args.algorithm == 'FedMR':
         FedMR(args, net_glob, dataset_train, dataset_test, dict_users)    
     elif args.algorithm == 'FedExP':
